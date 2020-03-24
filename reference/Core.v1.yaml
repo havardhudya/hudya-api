@@ -20,17 +20,19 @@ paths:
       summary: Create Legal Entity
       operationId: post-v2.0-core-ownership-legalentities
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LegalEntity_output'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/LegalEntityRequest'
+              $ref: '#/components/schemas/LegalEntity_input'
             examples: {}
         description: ''
-      security:
-        - API Key - 1: []
       parameters: []
       description: Create a legal entity
       tags:
@@ -42,16 +44,18 @@ paths:
       summary: Create Contact Point
       operationId: post-v3.0-ownership-contactpoints
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContactPoint_output'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ContactPointRequest'
+              $ref: '#/components/schemas/ContactPoint_input'
       description: Create a contact point for an existing legal entity
-      security:
-        - API Key - 1: []
       tags:
         - ownership
         - contact point
@@ -67,8 +71,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/IdentitySecretRequest'
-      security:
-        - API Key - 1: []
       description: Create an identity secret for an existing legal entity
       tags:
         - identity
@@ -85,8 +87,6 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/IdentityScopeRequest'
-      security:
-        - API Key - 1: []
       description: Create an identity scope for an existing legal entity
       tags:
         - identity
@@ -102,69 +102,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/IdentityRequest'
+              $ref: '#/components/schemas/IdentifyRequest'
+        description: ''
       description: Get a JWT for the other APIs
       tags:
         - identity
         - identify
 components:
   schemas:
-    LegalEntityRequest:
-      title: Legal Entity
-      type: object
-      x-examples:
-        Create:
-          name: string
-          country: 'NO'
-          preferred_language: nb
-      properties:
-        name:
-          type: string
-          example: Test Test
-        country:
-          type: string
-          example: 'NO'
-        preferred_language:
-          type: string
-          example: nb
-      required:
-        - name
-        - country
-        - preferred_language
-      x-tags:
-        - models
-        - legal entity
-    ContactPointRequest:
-      title: Contact Point Request
-      type: object
-      properties:
-        entity:
-          type: string
-          example: a16bdd41d8374ed89c1f8c037f57e240
-        target:
-          type: string
-          example: '90909090'
-        country:
-          type: string
-          example: 'NO'
-        kind:
-          type: string
-          default: EMAIL
-          enum:
-            - EMAIL
-            - MOBILE
-            - LAND_LINE
-            - SENDER_EMAIL
-            - MESSENGER
-          example: MOBILE
-      required:
-        - entity
-        - target
-        - country
-      description: ''
-      x-tags:
-        - models
-        - contact point
     IdentitySecretRequest:
       title: Identity Secret Request
       type: object
@@ -218,8 +163,119 @@ components:
       x-tags:
         - models
         - identity
+    Identifiable:
+      title: Identifiable
+      type: object
+      properties:
+        id:
+          type: string
+      required:
+        - id
+    ContactPoint_input:
+      title: ContactPoint_common_output
+      allOf:
+        - $ref: '#/components/schemas/ContactPoint_common'
+      x-tags:
+        - models
+    ContactPoint_output:
+      allOf:
+        - $ref: '#/components/schemas/ContactPoint_common'
+        - $ref: '#/components/schemas/Identifiable'
+        - type: object
+          properties:
+            verified:
+              type: string
+              format: date-time
+            source:
+              type: string
+          required:
+            - verified
+            - source
+      x-tags:
+        - models
+    ContactPoint_common:
+      title: ContactPoint_common
+      type: object
+      x-tags:
+        - models
+      properties:
+        kind:
+          $ref: '#/components/schemas/field_kind'
+        country:
+          $ref: '#/components/schemas/field_country'
+        entity:
+          $ref: '#/components/schemas/field_entity'
+        target:
+          type: string
+          example: '90909090'
+        identifiable:
+          type: string
+      required:
+        - kind
+        - country
+        - entity
+        - target
+        - identifiable
+    field_country:
+      type: string
+      title: Country_field
+      example: 'NO'
+      x-tags:
+        - field
+    field_kind:
+      type: string
+      title: kind_field
+      default: EMAIL
+      enum:
+        - EMAIL
+        - MOBILE
+        - LAND_LINE
+        - SENDER_EMAIL
+        - MESSENGER
+      example: MOBILE
+      x-tags:
+        - field
+    field_entity:
+      type: string
+      title: field_entity
+      example: a16bdd41d8374ed89c1f8c037f57e240
+      x-tags:
+        - field
+    LegalEntity_common:
+      title: LegalEntity_common
+      type: object
+      properties:
+        name:
+          type: string
+          example: Test Test
+        country:
+          $ref: '#/components/schemas/field_country'
+        preferred_language:
+          type: string
+          example: nb
+        entity_type:
+          $ref: '#/components/schemas/field_entity_type'
+      required:
+        - name
+        - country
+        - preferred_language
+        - entity_type
+    LegalEntity_input:
+      title: LegalEntity_input
+      allOf:
+        - $ref: '#/components/schemas/LegalEntity_common'
+    LegalEntity_output:
+      title: LegalEntity_output
+      allOf:
+        - $ref: '#/components/schemas/LegalEntity_common'
+        - $ref: '#/components/schemas/Identifiable'
+    field_entity_type:
+      title: field_entity_type
+      type: string
   securitySchemes:
     API Key - 1:
       type: http
       scheme: bearer
       description: ''
+security:
+  - API Key - 1: []
