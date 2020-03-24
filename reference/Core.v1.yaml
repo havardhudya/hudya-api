@@ -1,0 +1,193 @@
+openapi: 3.0.0
+info:
+  title: Hudya APIs
+  version: '3.0'
+  contact:
+    name: Hudya
+    url: hudya.no
+    email: operations@hudya.no
+  description: Hudya APIs
+servers:
+  - url: 'https://api.dev.hudya.io'
+    description: Stage
+  - url: 'https://havard.dev.hudya.io'
+    description: Stage - Havard
+  - url: 'https://api.hudya.io'
+    description: Prod
+paths:
+  /v3.0/ownership/legalentities/:
+    post:
+      summary: ''
+      operationId: post-v2.0-core-ownership-legalentities
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LegalEntityRequest'
+            examples: {}
+        description: ''
+      security:
+        - API Key - 1: []
+      parameters: []
+      description: Create a legal entity
+    parameters: []
+  /v3.0/ownership/contactpoints/:
+    post:
+      summary: ''
+      operationId: post-v3.0-ownership-contactpoints
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContactPointRequest'
+      description: Create a contact point for an existing legal entity
+      security:
+        - API Key - 1: []
+  /v3.0/identity/identitysecrets/:
+    post:
+      summary: ''
+      operationId: post-v3.0-identity-identitysecrets
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentitySecretRequest'
+      security:
+        - API Key - 1: []
+      description: Create an identity secret for an existing legal entity
+  /v3.0/identity/identityscopes/:
+    post:
+      summary: ''
+      operationId: post-v3.0-identity-identityscopes
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentityScopeRequest'
+      security:
+        - API Key - 1: []
+      description: Create an identity scope for an existing legal entity
+  /v2.0/identity/identify/:
+    post:
+      summary: ''
+      operationId: post-v2.0-identity-identify
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IdentityRequest'
+      description: Get a JWT for the other APIs
+components:
+  schemas:
+    LegalEntityRequest:
+      title: LegalEntity
+      type: object
+      x-examples:
+        Create:
+          name: string
+          country: 'NO'
+          preferred_language: nb
+      properties:
+        name:
+          type: string
+          example: Test Test
+        country:
+          type: string
+          example: 'NO'
+        preferred_language:
+          type: string
+          example: nb
+      required:
+        - name
+        - country
+        - preferred_language
+    ContactPointRequest:
+      title: ContactPointRequest
+      type: object
+      properties:
+        entity:
+          type: string
+          example: a16bdd41d8374ed89c1f8c037f57e240
+        target:
+          type: string
+          example: '90909090'
+        country:
+          type: string
+          example: 'NO'
+        kind:
+          type: string
+          default: EMAIL
+          enum:
+            - EMAIL
+            - MOBILE
+            - LAND_LINE
+            - SENDER_EMAIL
+            - MESSENGER
+          example: MOBILE
+      required:
+        - entity
+        - target
+        - country
+    IdentitySecretRequest:
+      title: IdentitySecretRequest
+      type: object
+      properties:
+        kind:
+          type: string
+          enum:
+            - PASSWORD
+            - PGP-PUBLIC-KEY
+            - CONTROL-QUESTION
+          example: PASSWORD
+        secret:
+          type: string
+        entity:
+          type: string
+          example: a16bdd41d8374ed89c1f8c037f57e240
+      required:
+        - kind
+        - secret
+        - entity
+    IdentityScopeRequest:
+      title: IdentityScope
+      type: object
+      properties:
+        identity:
+          type: string
+          example: a16bdd41d8374ed89c1f8c037f57e240
+        scopeSlug:
+          type: string
+          example: partner-esn
+      required:
+        - identity
+        - scopeSlug
+    IdentityRequest:
+      title: IdentityRequest
+      type: object
+      properties:
+        identity:
+          type: string
+          example: 1f95346c-cd2a-4ae7-84db-16c718f2a016
+        password:
+          type: string
+          example: testtest123
+  securitySchemes:
+    API Key - 1:
+      type: http
+      scheme: bearer
+      description: ''
