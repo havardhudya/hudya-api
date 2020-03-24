@@ -17,7 +17,7 @@ servers:
 paths:
   /v3.0/ownership/legalentities/:
     post:
-      summary: ''
+      summary: Create Legal Entity
       operationId: post-v2.0-core-ownership-legalentities
       responses:
         '200':
@@ -33,10 +33,13 @@ paths:
         - API Key - 1: []
       parameters: []
       description: Create a legal entity
+      tags:
+        - ownership
+        - legal entity
     parameters: []
   /v3.0/ownership/contactpoints/:
     post:
-      summary: ''
+      summary: Create Contact Point
       operationId: post-v3.0-ownership-contactpoints
       responses:
         '200':
@@ -49,9 +52,12 @@ paths:
       description: Create a contact point for an existing legal entity
       security:
         - API Key - 1: []
+      tags:
+        - ownership
+        - contact point
   /v3.0/identity/identitysecrets/:
     post:
-      summary: ''
+      summary: Create Identity Secret
       operationId: post-v3.0-identity-identitysecrets
       responses:
         '200':
@@ -64,9 +70,12 @@ paths:
       security:
         - API Key - 1: []
       description: Create an identity secret for an existing legal entity
+      tags:
+        - identity
+        - identity secret
   /v3.0/identity/identityscopes/:
     post:
-      summary: ''
+      summary: Create Identity Scope
       operationId: post-v3.0-identity-identityscopes
       responses:
         '200':
@@ -79,9 +88,12 @@ paths:
       security:
         - API Key - 1: []
       description: Create an identity scope for an existing legal entity
+      tags:
+        - identity
+        - identity scope
   /v2.0/identity/identify/:
     post:
-      summary: ''
+      summary: Authorize
       operationId: post-v2.0-identity-identify
       responses:
         '200':
@@ -92,10 +104,13 @@ paths:
             schema:
               $ref: '#/components/schemas/IdentityRequest'
       description: Get a JWT for the other APIs
+      tags:
+        - identity
+        - identify
 components:
   schemas:
     LegalEntityRequest:
-      title: LegalEntity
+      title: Legal Entity
       type: object
       x-examples:
         Create:
@@ -116,8 +131,11 @@ components:
         - name
         - country
         - preferred_language
+      x-tags:
+        - models
+        - legal entity
     ContactPointRequest:
-      title: ContactPointRequest
+      title: Contact Point Request
       type: object
       properties:
         entity:
@@ -143,10 +161,12 @@ components:
         - entity
         - target
         - country
+      description: ''
       x-tags:
-        - model
+        - models
+        - contact point
     IdentitySecretRequest:
-      title: IdentitySecretRequest
+      title: Identity Secret Request
       type: object
       properties:
         kind:
@@ -165,8 +185,11 @@ components:
         - kind
         - secret
         - entity
+      x-tags:
+        - models
+        - identity secret
     IdentityScopeRequest:
-      title: IdentityScope
+      title: Identity Scope
       type: object
       properties:
         identity:
@@ -178,8 +201,11 @@ components:
       required:
         - identity
         - scopeSlug
-    IdentityRequest:
-      title: IdentityRequest
+      x-tags:
+        - models
+        - identity scope
+    IdentifyRequest:
+      title: Identify Request
       type: object
       x-examples: {}
       properties:
@@ -189,6 +215,9 @@ components:
         password:
           type: string
           example: secretpassword
+      x-tags:
+        - models
+        - identity
   securitySchemes:
     API Key - 1:
       type: http
