@@ -179,13 +179,14 @@ components:
     IdentityRequest:
       title: IdentityRequest
       type: object
+      x-examples: {}
       properties:
         identity:
           type: string
           example: 1f95346c-cd2a-4ae7-84db-16c718f2a016
         password:
           type: string
-          example: testtest123
+          example: secretpassword
   securitySchemes:
     API Key - 1:
       type: http
